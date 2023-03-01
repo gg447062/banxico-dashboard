@@ -1,10 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
-import visualizerSlice from './visualizers';
+import visualizationSlice from './visualizations';
 
 export const store = configureStore({
   reducer: {
-    visualizers: visualizerSlice,
+    visualizations: visualizationSlice,
   },
   devTools: true,
 });
