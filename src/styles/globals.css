@@ -1,12 +1,16 @@
 :root {
-  --background-rgb: 255, 255, 255;
+  --bg-rgb: 255, 255, 255;
   --text-rgb: 0, 0, 0;
+  --bg--invert-rgb: 0, 0, 0;
+  --text--invert-rgb: 255, 255, 255;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-rgb: 0, 0, 0;
+    --bg-rgb: 0, 0, 0;
     --text-rgb: 255, 255, 255;
+    --bg--invert-rgb: 255, 255, 255;
+    --text--invert-rgb: 0, 0, 0;
   }
 }
 
@@ -24,7 +28,7 @@ body {
 }
 
 body {
-  background-color: rgb(var(--background-rgb));
+  background-color: rgb(var(--bg-rgb));
   color: rgb(var(--text-rgb));
 }
 
