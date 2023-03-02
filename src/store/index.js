@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { createWrapper } from 'next-redux-wrapper';
+import logger from 'redux-logger';
 import visualizationSlice from './visualizations';
 
 export const store = configureStore({
   reducer: {
     visualizations: visualizationSlice,
   },
-  devTools: true,
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
+  devTools: process.env.NODE_ENV !== 'production',
 });
 
 const makeStore = () => store;
