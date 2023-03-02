@@ -9,18 +9,17 @@ const initialState = {
 export const fetchData = createAsyncThunk(
   'visualizations/fetchData',
   async (params) => {
-    console.log(process.env.NEXT_PUBLIC_BANXICO_TOKEN);
     const { data } = await axios.get(
-      `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/${params.seriesString}/datos/?fechaI=${params.startDate}&fechaF=${params.endDate}&locale=${params.language}`,
+      `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/${params.seriesString}?token=${process.env.NEXT_PUBLIC_BANXICO_TOKEN}`,
       {
         headers: {
           Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
-          'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
+          // 'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
         },
       }
     );
-    console.log(data);
-    return { payload: data, type: params.type };
+
+    return { data: data.bmx.series, type: params.type, title: params.title };
   }
 );
 
@@ -40,9 +39,7 @@ export const visualizationSlice = createSlice({
       state.status = 'loading';
     });
     builder.addCase(fetchData.fulfilled, (state, action) => {
-      const visualization = action.payload;
-      visualization.type = action.type;
-      state.entities[visualization.id] = visualization;
+      state.entities[Object.keys(state.entities).length + 1] = action.payload;
       state.status = 'idle';
     });
   },
