@@ -1,0 +1,19 @@
+.base {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 1px solid white;
+  padding: 1em;
+  display: flex;
+  flex-direction: column;
+}
+
+.li {
+  list-style: none;
+}
+
+.selected {
+  background-color: white;
+  color: black;
+}
