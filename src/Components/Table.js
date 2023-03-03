@@ -1,30 +1,72 @@
 import styles from '@/styles/Table.module.css';
+import { useEffect, useState } from 'react';
 
-function Column({ input, date = false }) {
+function Row({ input }) {
   return (
-    <div className={styles.column}>
-      <div className={styles.head}>{date ? '' : input.titulo}</div>
-      {input.datos.map((el, i) => {
+    <tr>
+      <td className={styles.td}>{input.fecha}</td>
+      {input.datos.map((dato, i) => {
         return (
-          <div key={i} className={styles.row}>
-            {date ? el['fecha'] : el['dato']}
-          </div>
+          <td key={i} className={styles.td}>
+            {dato}
+          </td>
         );
       })}
-    </div>
+    </tr>
   );
 }
 
-export default function Table({ el }) {
+export default function Table({ input }) {
+  const [data, setData] = useState();
+  const [titles, setTitles] = useState();
+
+  useEffect(() => {
+    function processData() {
+      const _data = [];
+      const _titles = [];
+      input.data.forEach((el, i) => {
+        _titles.push(el.titulo);
+        el.datos.forEach((dato, j) => {
+          if (i === 0) {
+            _data.push({
+              fecha: dato.fecha,
+              datos: [dato.dato],
+            });
+          } else {
+            _data[j].datos.push(dato.dato);
+          }
+        });
+      });
+      setData(_data);
+      setTitles(_titles);
+    }
+
+    if (!data && !titles) {
+      processData();
+    }
+  }, [data, titles, input.data]);
   return (
-    <div>
-      <h2 className={styles.bold}>{el.title}</h2>
-      <div className={styles.body}>
-        <Column input={el.data[0]} date={true}></Column>
-        {el.data.map((data, i) => {
-          return <Column key={i} input={data}></Column>;
-        })}
-      </div>
-    </div>
+    <table className={styles.table}>
+      <caption>{input.title}</caption>
+      <thead>
+        <tr>
+          <th className={styles.th}></th>
+          {titles &&
+            titles.map((el, i) => {
+              return (
+                <th key={i} className={styles.th}>
+                  {el}
+                </th>
+              );
+            })}
+        </tr>
+      </thead>
+      <tbody>
+        {data &&
+          data.map((el, i) => {
+            return <Row key={i} input={el} />;
+          })}
+      </tbody>
+    </table>
   );
 }
