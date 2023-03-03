@@ -3,12 +3,10 @@ import styles from '@/styles/Home.module.css';
 import { AddVisualizationModal } from '@/Components/Modals';
 import { useModals } from '@/hooks/useModals';
 import { useSelector } from 'react-redux';
-import Table from '@/Components/Table';
-import { useEffect } from 'react';
-import Graph from '@/Components/Graph';
+import Visualization from '@/Components/Visualization';
 
 export default function Home() {
-  const [openModalOne, closeModalOne, modalOneOpen] = useModals('modalOne');
+  const [openAddModal, closeAddModal, addModalOpen] = useModals('addModal');
   const visualizations = useSelector((state) => state.visualizations.entities);
 
   return (
@@ -24,17 +22,13 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         {/* <h2>welcome to the dashboard</h2> */}
-        <ul>
+        <div>
           {Object.values(visualizations).map((el, i) => {
-            if (el.type === 'table') {
-              return <Table key={i} input={el} />;
-            } else {
-              return <Graph key={i} input={el} />;
-            }
+            return <Visualization input={el} key={i} />;
           })}
-        </ul>
-        <button onClick={openModalOne}>+</button>
-        <AddVisualizationModal hide={closeModalOne} isOpen={modalOneOpen} />
+        </div>
+        <button onClick={openAddModal}>+</button>
+        <AddVisualizationModal hide={closeAddModal} isOpen={addModalOpen} />
       </main>
     </>
   );
