@@ -1,8 +1,22 @@
-import { BarChart, CartesianGrid, XAxis, YAxis, Legend, Bar } from 'recharts';
+import {
+  BarChart,
+  LineChart,
+  AreaChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Legend,
+  Bar,
+  Line,
+  Area,
+  Tooltip,
+} from 'recharts';
 import { useEffect, useState } from 'react';
 
-export default function Graph({ input }) {
+export default function Graph({ input, type = 'bar' }) {
   const [data, setData] = useState();
+  const width = 500;
+  const height = 400;
 
   useEffect(() => {
     function processData() {
@@ -29,14 +43,66 @@ export default function Graph({ input }) {
   }, [data, input.data]);
 
   return (
-    <BarChart width={400} height={300} data={data}>
-      <CartesianGrid strokeDasharray={'1 1'} />
-      <XAxis dataKey={'fecha'} />
-      <YAxis />
-      <Legend />
-      {input.data.map((el, i) => {
-        return <Bar key={i} dataKey={el.idSerie} fill="#1884d8" />;
-      })}
-    </BarChart>
+    <div>
+      <h2>{input.title}</h2>
+      {type === 'bar' && (
+        <BarChart width={width} height={height} data={data}>
+          <CartesianGrid strokeDasharray={'1 1'} />
+          <XAxis dataKey={'fecha'} />
+          <YAxis />
+          <Legend />
+          <Tooltip />
+          {input.data.map((el, i) => {
+            return (
+              <Bar
+                key={i}
+                dataKey={el.idSerie}
+                fill={input.colors[el.idSerie]}
+              />
+            );
+          })}
+        </BarChart>
+      )}
+      {type === 'line' && (
+        <LineChart width={width} height={height} data={data}>
+          <CartesianGrid strokeDasharray={'1 1'} />
+          <XAxis dataKey={'fecha'} />
+          <YAxis />
+          <Legend />
+          <Tooltip />
+          {input.data.map((el, i) => {
+            return (
+              <Line
+                key={i}
+                type="monotone"
+                dataKey={el.idSerie}
+                stroke={input.colors[el.idSerie]}
+              />
+            );
+          })}
+        </LineChart>
+      )}
+      {type === 'area' && (
+        <AreaChart width={width} height={height} data={data}>
+          <CartesianGrid strokeDasharray={'1 1'} />
+          <XAxis dataKey={'fecha'} />
+          <YAxis />
+          <Legend />
+          <Tooltip />
+          {input.data.map((el, i) => {
+            return (
+              <Area
+                key={i}
+                type="monotone"
+                dataKey={el.idSerie}
+                stroke={input.colors[el.idSerie]}
+                fill={input.colors[el.idSerie]}
+                fillOpacity={0.5}
+              />
+            );
+          })}
+        </AreaChart>
+      )}
+    </div>
   );
 }

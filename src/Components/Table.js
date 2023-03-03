@@ -20,6 +20,10 @@ export default function Table({ input }) {
   const [data, setData] = useState();
   const [titles, setTitles] = useState();
 
+  function adjustDecimals(val) {
+    return parseFloat(val.split(',').join('')).toFixed(input.decimals);
+  }
+
   useEffect(() => {
     function processData() {
       const _data = [];
@@ -27,13 +31,14 @@ export default function Table({ input }) {
       input.data.forEach((el, i) => {
         _titles.push(el.titulo);
         el.datos.forEach((dato, j) => {
+          const adjustedData = adjustDecimals(dato.dato);
           if (i === 0) {
             _data.push({
               fecha: dato.fecha,
-              datos: [dato.dato],
+              datos: [adjustedData],
             });
           } else {
-            _data[j].datos.push(dato.dato);
+            _data[j].datos.push(adjustedData);
           }
         });
       });
@@ -44,29 +49,31 @@ export default function Table({ input }) {
     if (!data && !titles) {
       processData();
     }
-  }, [data, titles, input.data]);
+  }, [data, titles, input.data, input.decimals]);
   return (
-    <table className={styles.table}>
-      <caption>{input.title}</caption>
-      <thead>
-        <tr>
-          <th className={styles.th}></th>
-          {titles &&
-            titles.map((el, i) => {
-              return (
-                <th key={i} className={styles.th}>
-                  {el}
-                </th>
-              );
+    <div>
+      <table className={styles.table}>
+        <caption>{input.title}</caption>
+        <thead>
+          <tr>
+            <th className={styles.th}></th>
+            {titles &&
+              titles.map((el, i) => {
+                return (
+                  <th key={i} className={styles.th}>
+                    {el}
+                  </th>
+                );
+              })}
+          </tr>
+        </thead>
+        <tbody>
+          {data &&
+            data.map((el, i) => {
+              return <Row key={i} input={el} />;
             })}
-        </tr>
-      </thead>
-      <tbody>
-        {data &&
-          data.map((el, i) => {
-            return <Row key={i} input={el} />;
-          })}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   );
 }

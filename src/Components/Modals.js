@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import { fetchData } from '@/store/visualizations';
 import axios from 'axios';
 import styles from '@/styles/Modals.module.css';
-import Table from './Table';
+import { v4 as uuid } from 'uuid';
 
 export function AddVisualizationModal({ isOpen, hide }) {
   const today = new Date().toISOString().split('T')[0];
@@ -13,6 +13,10 @@ export function AddVisualizationModal({ isOpen, hide }) {
   const [query, setQuery] = useState('');
   const [selectedSeries, setSelectedSeries] = useState([]);
   const [type, setType] = useState('table');
+  const [decimals, setDecimals] = useState(1);
+  const [dateFormat, setDateFormat] = useState('dd/mm/yyyy');
+  const [graphType, setGraphType] = useState('');
+  const [colors, setColors] = useState({});
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState(today);
   const [title, setTitle] = useState('');
@@ -33,9 +37,32 @@ export function AddVisualizationModal({ isOpen, hide }) {
 
   async function add() {
     const seriesString = selectedSeries.join(',');
-    dispatch(
-      fetchData({ seriesString, type, language, title, startDate, endDate })
-    );
+    const id = uuid().slice(0, 8);
+    const data =
+      type === 'table'
+        ? {
+            seriesString,
+            type,
+            language,
+            title,
+            startDate,
+            endDate,
+            decimals,
+            dateFormat,
+            id,
+          }
+        : {
+            seriesString,
+            type,
+            language,
+            title,
+            startDate,
+            endDate,
+            graphType,
+            colors,
+            id,
+          };
+    dispatch(fetchData(data));
     reset();
     hide();
   }
@@ -100,6 +127,62 @@ export function AddVisualizationModal({ isOpen, hide }) {
             <option value={'table'}>table</option>
             <option value={'graph'}>graph</option>
           </select>
+          {type === 'table' && (
+            <>
+              <label htmlFor="decimals">Decimals</label>
+              <input
+                id="decimals"
+                type="number"
+                value={decimals}
+                onChange={(e) => setDecimals(e.target.value)}
+              ></input>
+              <label htmlFor="dateFormat" defaultValue={dateFormat}>
+                Date Format
+              </label>
+              <select
+                id="dateFormat"
+                onChange={(e) => setDateFormat(e.target.value)}
+              >
+                <option value={'mm/dd/yyy'}>mm/dd/yyy</option>
+                <option value={'dd/mm/yyyy'}>dd/mm/yyyy</option>
+                <option value={'yyyy/dd/mm'}>yyyy/dd/mm</option>
+              </select>
+            </>
+          )}
+          {type === 'graph' && (
+            <>
+              <label htmlFor="graphType">Graph Type</label>
+              <select
+                id="graphType"
+                onChange={(e) => setGraphType(e.target.value)}
+                defaultValue={graphType}
+              >
+                <option value={'bar'}>bar</option>
+                <option value={'area'}>area</option>
+                <option value={'line'}>line</option>
+              </select>
+              <p>Select colors for each series</p>
+              {selectedSeries.map((el, i) => {
+                return (
+                  <div key={i}>
+                    <label htmlFor="color-select">{el}</label>
+                    <select
+                      id="color-select"
+                      onChange={(e) => {
+                        setColors({ ...colors, [el]: e.target.value });
+                      }}
+                      defaultValue="---"
+                    >
+                      <option>blue</option>
+                      <option>red</option>
+                      <option>green</option>
+                      <option>pink</option>
+                    </select>
+                  </div>
+                );
+              })}
+            </>
+          )}
           <label htmlFor="startDate">start date</label>
           <input
             type="date"
