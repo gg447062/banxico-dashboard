@@ -1,5 +1,5 @@
 import styles from '@/styles/Table.module.css';
-import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 function Row({ input }) {
   return (
@@ -16,49 +16,18 @@ function Row({ input }) {
   );
 }
 
-export default function Table({ input }) {
-  const [data, setData] = useState();
-  const [titles, setTitles] = useState();
+export default function Table({ id }) {
+  const data = useSelector((state) => state.visualizations.entities[id]);
 
-  function adjustDecimals(val) {
-    return parseFloat(val.split(',').join('')).toFixed(input.decimals);
-  }
-
-  useEffect(() => {
-    function processData() {
-      const _data = [];
-      const _titles = [];
-      input.data.forEach((el, i) => {
-        _titles.push(el.titulo);
-        el.datos.forEach((dato, j) => {
-          const adjustedData = adjustDecimals(dato.dato);
-          if (i === 0) {
-            _data.push({
-              fecha: dato.fecha,
-              datos: [adjustedData],
-            });
-          } else {
-            _data[j].datos.push(adjustedData);
-          }
-        });
-      });
-      setData(_data);
-      setTitles(_titles);
-    }
-
-    if (!data && !titles) {
-      processData();
-    }
-  }, [data, titles, input.data, input.decimals]);
   return (
     <div>
       <table className={styles.table}>
-        <caption>{input.title}</caption>
+        <caption>{data.title}</caption>
         <thead>
           <tr>
             <th className={styles.th}></th>
-            {titles &&
-              titles.map((el, i) => {
+            {data.titlesList &&
+              data.titlesList.map((el, i) => {
                 return (
                   <th key={i} className={styles.th}>
                     {el}
@@ -69,7 +38,7 @@ export default function Table({ input }) {
         </thead>
         <tbody>
           {data &&
-            data.map((el, i) => {
+            data.data.map((el, i) => {
               return <Row key={i} input={el} />;
             })}
         </tbody>

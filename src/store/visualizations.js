@@ -8,18 +8,83 @@ const initialState = {
 
 export const fetchData = createAsyncThunk(
   'visualizations/fetchData',
-  async (params) => {
+  async (obj) => {
     const { data } = await axios.get(
-      `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/${params.seriesString}?token=${process.env.NEXT_PUBLIC_BANXICO_TOKEN}`,
-      {
-        headers: {
-          Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
-          // 'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
-        },
-      }
+      `/api/datos?series=${obj.seriesString}&start=${obj.startDate}&end=${obj.endDate}&language=${obj.language}`
+      // {
+      //   headers: {
+      //     Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
+      //     // 'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
+      //   },
+      // }
     );
 
-    return { data: data.bmx.series, type: params.type, title: params.title };
+    function adjustDecimals(val) {
+      return parseFloat(val.split(',').join('')).toFixed(obj.decimals);
+    }
+
+    function adjustDate(date) {
+      if (obj.type === 'graph' || obj.dateFormat === 'dd/mm/yyyy') {
+        return date;
+      }
+
+      const dateParts = date.split('/');
+
+      if (obj.dateFormat === 'mm/dd/yyyy') {
+        return `${dateParts[1]}/${dateParts[0]}/${dateParts[2]}`;
+      } else if (obj.dateFormat === 'yyyy/dd/mm') {
+        return `${dateParts[2]}/${dateParts[0]}/${dateParts[1]}`;
+      }
+    }
+
+    const processedData = [];
+    const titlesList = data.bmx.series.map((el) => el.titulo);
+    if (obj.type === 'graph') {
+      data.bmx.series.forEach((el, i) => {
+        const id = el.idSerie;
+        el.datos.forEach((dato, j) => {
+          if (i === 0) {
+            processedData.push({
+              fecha: dato.fecha,
+              [id]: parseFloat(dato.dato.split(',').join('')),
+            });
+          } else {
+            processedData[j][id] = parseFloat(dato.dato.split(',').join(''));
+          }
+        });
+      });
+    } else {
+      data.bmx.series.forEach((el, i) => {
+        el.datos.forEach((dato, j) => {
+          const adjustedData = adjustDecimals(dato.dato);
+          if (i === 0) {
+            processedData.push({
+              fecha: adjustDate(dato.fecha),
+              datos: [adjustedData],
+            });
+          } else {
+            processedData[j].datos.push(adjustedData);
+          }
+        });
+      });
+    }
+
+    return {
+      data: processedData,
+      titlesList: titlesList,
+      selectedSeries: obj.seriesString.split(','),
+      startDate: obj.startDate,
+      endDate: obj.endDate,
+      language: obj.language,
+      type: obj.type,
+      title: obj.title,
+      id: obj.id,
+      dateFormat: obj.dateFormat,
+      decimals: obj.decimals,
+      graphType: obj.graphType,
+      colors: obj.colors,
+      updated: obj.updated,
+    };
   }
 );
 
@@ -31,7 +96,7 @@ export const visualizationSlice = createSlice({
       delete state.entities[action.payload];
     },
     update: (state, action) => {
-      state.entities[action.id] = action.payload;
+      state.entities[action.payload.id] = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -39,7 +104,7 @@ export const visualizationSlice = createSlice({
       state.status = 'loading';
     });
     builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.entities[Object.keys(state.entities).length + 1] = action.payload;
+      state.entities[action.payload.id] = action.payload;
       state.status = 'idle';
     });
   },
