@@ -9,14 +9,16 @@ const initialState = {
 export const fetchData = createAsyncThunk(
   'visualizations/fetchData',
   async (obj) => {
+    const dateString = obj.startDate ? `${obj.startDate}/${obj.endDate}` : '';
+
     const { data } = await axios.get(
-      `/api/datos?series=${obj.seriesString}&start=${obj.startDate}&end=${obj.endDate}&language=${obj.language}`
-      // {
-      //   headers: {
-      //     Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
-      //     // 'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
-      //   },
-      // }
+      `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/${obj.seriesString}/${dateString}?locale=${obj.language}`,
+      {
+        headers: {
+          Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
+          'Bmx-Token': process.env.NEXT_PUBLIC_BANXICO_TOKEN,
+        },
+      }
     );
 
     function adjustDecimals(val) {
