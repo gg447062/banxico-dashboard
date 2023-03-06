@@ -1,12 +1,15 @@
 import Head from 'next/head';
 import styles from '@/styles/Home.module.css';
-import { AddVisualizationModal } from '@/Components/Modals';
+import { VisualizationModal } from '@/Components/Modals';
 import { useModals } from '@/hooks/useModals';
 import { useSelector } from 'react-redux';
+import { useState } from 'react';
 import Visualization from '@/Components/Visualization';
 
 export default function Home() {
   const [openAddModal, closeAddModal, addModalOpen] = useModals('addModal');
+  const [openEditModal, closeEditModal, editModalOpen] = useModals('editModal');
+  const [currentVisualization, setCurrentVisualization] = useState('');
   const visualizations = useSelector((state) => state.visualizations.entities);
 
   return (
@@ -24,11 +27,29 @@ export default function Home() {
         {/* <h2>welcome to the dashboard</h2> */}
         <div>
           {Object.values(visualizations).map((el, i) => {
-            return <Visualization input={el} key={i} />;
+            return (
+              <Visualization
+                id={el.id}
+                type={el.type}
+                key={i}
+                setCurrentVisualization={setCurrentVisualization}
+                openEditModal={openEditModal}
+              />
+            );
           })}
         </div>
         <button onClick={openAddModal}>+</button>
-        <AddVisualizationModal hide={closeAddModal} isOpen={addModalOpen} />
+        <VisualizationModal
+          hide={closeAddModal}
+          isOpen={addModalOpen}
+          mode="add"
+        />
+        <VisualizationModal
+          hide={closeEditModal}
+          isOpen={editModalOpen}
+          mode="edit"
+          id={currentVisualization}
+        />
       </main>
     </>
   );
