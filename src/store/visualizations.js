@@ -6,8 +6,8 @@ const initialState = {
   entities: {},
 };
 
-export const fetchData = createAsyncThunk(
-  'visualizations/fetchData',
+export const fetchSeriesData = createAsyncThunk(
+  'visualizations/fetchSeriesData',
   async (obj) => {
     const dateString = obj.startDate ? `${obj.startDate}/${obj.endDate}` : '';
 
@@ -85,7 +85,6 @@ export const fetchData = createAsyncThunk(
       decimals: obj.decimals,
       graphType: obj.graphType,
       colors: obj.colors,
-      updated: obj.updated,
     };
   }
 );
@@ -97,15 +96,12 @@ export const visualizationSlice = createSlice({
     remove: (state, action) => {
       delete state.entities[action.payload];
     },
-    update: (state, action) => {
-      state.entities[action.payload.id] = action.payload;
-    },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchData.pending, (state) => {
+    builder.addCase(fetchSeriesData.pending, (state) => {
       state.status = 'loading';
     });
-    builder.addCase(fetchData.fulfilled, (state, action) => {
+    builder.addCase(fetchSeriesData.fulfilled, (state, action) => {
       state.entities[action.payload.id] = action.payload;
       state.status = 'idle';
     });

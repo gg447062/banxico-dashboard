@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchData, update } from '@/store/visualizations';
+import { fetchSeriesData } from '@/store/visualizations';
 import axios from 'axios';
 import styles from '@/styles/Modals.module.css';
 import { v4 as uuid } from 'uuid';
@@ -44,9 +44,9 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
 
   function updateVisualization() {
     const seriesString = selectedSeries.join(',');
-    const updated = true;
+
     dispatch(
-      fetchData({
+      fetchSeriesData({
         seriesString,
         type,
         language,
@@ -58,25 +58,8 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
         graphType,
         colors,
         id,
-        updated,
       })
     );
-
-    // dispatch(
-    //   update({
-    //     seriesString,
-    //     type,
-    //     language,
-    //     title,
-    //     startDate,
-    //     endDate,
-    //     decimals,
-    //     dateFormat,
-    //     graphType,
-    //     colors,
-    //     id,
-    //   })
-    // );
     reset();
     hide();
   }
@@ -84,9 +67,8 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   async function add() {
     const seriesString = selectedSeries.join(',');
     const id = uuid().slice(0, 8);
-    const updated = false;
     dispatch(
-      fetchData({
+      fetchSeriesData({
         seriesString,
         type,
         language,
@@ -98,7 +80,6 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
         graphType,
         colors,
         id,
-        updated,
       })
     );
     reset();
@@ -120,7 +101,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   }
 
   useEffect(() => {
-    async function fetchSeriesData() {
+    async function fetchSeriesCatalog() {
       const { data } = await axios.get(
         `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/?page=1`,
         {
@@ -146,7 +127,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
     }
 
     if (isOpen && !series) {
-      fetchSeriesData();
+      fetchSeriesCatalog();
       if (mode === 'edit') {
         setStateFromVisualization();
       }
@@ -156,6 +137,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   return isOpen
     ? createPortal(
         <div className={styles.base}>
+          <h2>Add a visualization</h2>
           <div>selected series</div>
           <div>
             {selectedSeries.map((el, i) => {
