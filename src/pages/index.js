@@ -38,7 +38,7 @@ export default function Home() {
             );
           })}
         </div>
-        <button onClick={openAddModal}>+</button>
+        <button onClick={openAddModal}>add</button>
         <VisualizationModal
           hide={closeAddModal}
           isOpen={addModalOpen}
