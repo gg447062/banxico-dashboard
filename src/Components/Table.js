@@ -20,29 +20,27 @@ export default function Table({ id }) {
   const data = useSelector((state) => state.visualizations.entities[id]);
 
   return (
-    <div>
-      <table className={styles.table}>
-        <caption>{data.title}</caption>
-        <thead>
-          <tr>
-            <th className={styles.th}></th>
-            {data.titlesList &&
-              data.titlesList.map((el, i) => {
-                return (
-                  <th key={i} className={styles.th}>
-                    {el}
-                  </th>
-                );
-              })}
-          </tr>
-        </thead>
-        <tbody>
-          {data &&
-            data.data.map((el, i) => {
-              return <Row key={i} input={el} />;
+    <table className={styles.table}>
+      <caption>{data.title}</caption>
+      <thead>
+        <tr>
+          <th className={styles.th}></th>
+          {data.titlesList &&
+            data.titlesList.map((el, i) => {
+              return (
+                <th key={i} className={styles.th}>
+                  {el}
+                </th>
+              );
             })}
-        </tbody>
-      </table>
-    </div>
+        </tr>
+      </thead>
+      <tbody>
+        {data &&
+          data.data.map((el, i) => {
+            return <Row key={i} input={el} />;
+          })}
+      </tbody>
+    </table>
   );
 }
