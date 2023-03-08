@@ -53,7 +53,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('redux store', () => {
-  it('initializes store with intial state', () => {
+  it('initializes store with initial state', () => {
     const visualizationSliceInit = visualizationSlice(initialState, {
       type: 'unknown',
     });

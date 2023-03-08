@@ -4,15 +4,18 @@ import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import '@testing-library/jest-dom';
 import Home from '../pages';
+import { initialStateWithVisualizations } from '../lib/utils/test_utils';
 
 describe('Home Screen', () => {
-  it('renders the add button', () => {
+  beforeEach(() => {
     renderWithProviders(<Home />);
+  });
+  it('renders the add button', () => {
     const button = screen.getByRole('button', { name: /add/i });
     expect(button).toBeInTheDocument();
   });
+
   it('renders the add visualization modal when a user clicks the add button', () => {
-    renderWithProviders(<Home />);
     fireEvent.click(screen.getByRole('button', { name: /add/i }));
     const h2 = screen.getByText(/Add a visualization/i);
     expect(h2).toBeInTheDocument();
@@ -20,6 +23,123 @@ describe('Home Screen', () => {
     options.forEach((option) => expect(option).toBeInTheDocument());
     const button = screen.getByRole('button', { name: /generate/i });
     expect(button).toBeInTheDocument();
+  });
+});
+
+describe('Visualization component', () => {
+  let testStore;
+  beforeEach(() => {
+    const { store } = renderWithProviders(<Home />, {
+      preloadedState: initialStateWithVisualizations,
+    });
+    testStore = store;
+  });
+  it('renders visualizations from store', () => {
+    const visualizations = screen.getAllByTestId('visualization');
+    expect(visualizations.length).toBe(2);
+  });
+  it('renders edit and remove buttons', () => {
+    const visualizations = screen.getAllByTestId('visualization');
+    expect(visualizations.length).toBe(2);
+
+    const editButtons = screen.getAllByRole('button', { name: /Edit/i });
+    const removeButtons = screen.getAllByRole('button', {
+      name: /remove-visualization/i,
+    });
+
+    expect(editButtons.length).toBe(2);
+    expect(removeButtons.length).toBe(2);
+  });
+  it('renders both tables and graphs', () => {
+    const visualizations = screen.getAllByTestId('visualization');
+    expect(visualizations.length).toBe(2);
+
+    const table = screen.getByRole('table');
+    expect(table).toBeInTheDocument();
+
+    const graph = screen.getByTestId('graph');
+    expect(graph).toBeInTheDocument();
+  });
+
+  it('clicking remove button removes a visualization from the screen and the store', () => {
+    const removeButtons = screen.getAllByRole('button', {
+      name: /remove-visualization/i,
+    });
+
+    let visualizationsInStore = Object.values(
+      testStore.getState().visualizations.entities
+    );
+    let visualizations = screen.getAllByTestId('visualization');
+
+    expect(visualizations.length).toBe(2);
+    expect(visualizationsInStore.length).toBe(2);
+
+    fireEvent.click(removeButtons[1]);
+
+    visualizationsInStore = Object.values(
+      testStore.getState().visualizations.entities
+    );
+    visualizations = screen.getAllByTestId('visualization');
+    expect(visualizations.length).toBe(1);
+    expect(visualizationsInStore.length).toBe(1);
+  });
+});
+
+describe('Edit Visualization Modal', () => {
+  let testStore;
+  beforeEach(() => {
+    const { store } = renderWithProviders(<Home />, {
+      preloadedState: initialStateWithVisualizations,
+    });
+    testStore = store;
+  });
+
+  it('updates state to match visualization data for a table', async () => {
+    let visualizationData =
+      testStore.getState().visualizations.entities['1234'];
+
+    const editButtons = screen.getAllByRole('button', { name: /Edit/i });
+    fireEvent.click(editButtons[0]);
+
+    const typeInput = await await screen.findByLabelText(/Visualization Type/i);
+    const startDateInput = await screen.findByLabelText(/Start Date/i);
+    const endDateInput = await screen.findByLabelText(/End Date/i);
+    const titleInput = await screen.findByLabelText(/Title/i);
+    const languageInput = await screen.findByLabelText(/Language/i);
+    const decimalsInput = await screen.findByLabelText(/Decimals/i);
+    const dateFormatInput = await screen.findByLabelText(/Date Format/i);
+
+    expect(typeInput.value).toBe(visualizationData.type);
+    expect(startDateInput.value).toBe(visualizationData.startDate);
+    expect(endDateInput.value).toBe(visualizationData.endDate);
+    expect(titleInput.value).toBe(visualizationData.title);
+    expect(languageInput.value).toBe(visualizationData.language);
+    expect(dateFormatInput.value).toBe(visualizationData.dateFormat);
+    expect(decimalsInput.value).toBe(visualizationData.decimals);
+  });
+
+  it('updates state to match visualization data for a graph', async () => {
+    const visualizationData =
+      testStore.getState().visualizations.entities['5678'];
+
+    const editButtons = screen.getAllByRole('button', { name: /Edit/i });
+    fireEvent.click(editButtons[1]);
+
+    const typeInput = await await screen.findByLabelText(/Visualization Type/i);
+    const startDateInput = await screen.findByLabelText(/Start Date/i);
+    const endDateInput = await screen.findByLabelText(/End Date/i);
+    const titleInput = await screen.findByLabelText(/Title/i);
+    const languageInput = await screen.findByLabelText(/Language/i);
+    const colorsInput = screen.getByText(/Select colors for each series/i);
+    const graphTypeInput = screen.getByLabelText(/Graph Type/i);
+
+    expect(typeInput.value).toBe(visualizationData.type);
+    expect(startDateInput.value).toBe(visualizationData.startDate);
+    expect(endDateInput.value).toBe(visualizationData.endDate);
+    expect(titleInput.value).toBe(visualizationData.title);
+    expect(languageInput.value).toBe(visualizationData.language);
+    expect(colorsInput).toBeInTheDocument();
+    expect(graphTypeInput).toBeInTheDocument();
   });
 });
 
@@ -61,6 +181,7 @@ describe('Add Visualization Modal', () => {
     const languageInput = screen.getByLabelText(/Language/i);
     const decimalsInput = screen.getByLabelText(/Decimals/i);
     const dateFormatInput = screen.getByLabelText(/Date Format/i);
+
     expect(typeInput.value).toBe('table');
     expect(startDateInput.value).toBe('');
     expect(endDateInput.value).toBe(new Date().toISOString().split('T')[0]);
