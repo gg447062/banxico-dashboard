@@ -235,7 +235,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                 <select
                   id="dateFormat"
                   onChange={(e) => setDateFormat(e.target.value)}
-                  defaultValue={dateFormat}
+                  value={dateFormat}
                 >
                   <option value={''}>-----</option>
                   <option value={'dd/mm/yyyy'}>dd/mm/yyyy</option>
@@ -250,7 +250,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                 <select
                   id="graphType"
                   onChange={(e) => setGraphType(e.target.value)}
-                  defaultValue={graphType}
+                  value={graphType}
                 >
                   <option value={''}>-----</option>
                   <option value={'bar'}>bar</option>
@@ -267,7 +267,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                         onChange={(e) => {
                           setColors({ ...colors, [el]: e.target.value });
                         }}
-                        defaultValue={colors[el]}
+                        value={colors[el]}
                       >
                         <option value="">----</option>
                         <option value={'blue'}>blue</option>
@@ -291,7 +291,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
             <select
               id="language"
               onChange={(e) => setLanguage(e.target.value)}
-              defaultValue={language}
+              value={language}
             >
               <option value="es">Español</option>
               <option value="en">English</option>
