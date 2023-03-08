@@ -1,0 +1,25 @@
+.base {
+  padding: 0.6em 1em;
+  border-radius: var(--border-radius);
+}
+
+.primary {
+  composes: base;
+  background-color: rgb(var(--bg-rgb));
+  border: 1px solid rgb(var(--bg--invert-rgb));
+  color: rgb(var(--text-rgb));
+}
+
+.cancel {
+  composes: base;
+  background-color: rgb(var(--cancel-rgb));
+  border: 1px solid rgb(var(--cancel-rgb));
+  color: rgb(var(--text--invert-rgb));
+}
+
+.submit {
+  composes: base;
+  background-color: rgb(var(--submit-rgb));
+  border: 1px solid rgb(var(--submit-rgb));
+  color: rgb(var(--text--invert-rgb));
+}
