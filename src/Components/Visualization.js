@@ -2,6 +2,7 @@ import Table from './Table';
 import Graph from './Graph';
 import { useDispatch } from 'react-redux';
 import { remove } from '@/store/visualizations';
+import Button from './Button';
 
 export default function Visualization({
   id,
@@ -17,15 +18,16 @@ export default function Visualization({
   }
   return (
     <div data-testid="visualization">
-      <button
-        aria-label="remove-visualization"
+      <Button
         onClick={() => {
           dispatch(remove(id));
         }}
-      >
-        X
-      </button>
-      <button onClick={handleClick}>Edit</button>
+        text="X"
+        label="remove-visualization"
+        type="cancel"
+      />
+      <Button onClick={handleClick} text="Edit" type="primary" />
+
       {type === 'table' && <Table id={id} />}
       {type === 'graph' && <Graph id={id} />}
     </div>

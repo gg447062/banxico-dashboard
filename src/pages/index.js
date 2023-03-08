@@ -5,6 +5,7 @@ import { useModals } from '@/hooks/useModals';
 import { useSelector } from 'react-redux';
 import { useState } from 'react';
 import Visualization from '@/Components/Visualization';
+import Button from '@/Components/Button';
 
 export default function Home() {
   const [openAddModal, closeAddModal, addModalOpen] = useModals('addModal');
@@ -38,7 +39,7 @@ export default function Home() {
             );
           })}
         </div>
-        <button onClick={openAddModal}>add</button>
+        <Button onClick={openAddModal} text="add" type="primary" />
         <VisualizationModal
           hide={closeAddModal}
           isOpen={addModalOpen}

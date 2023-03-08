@@ -1,18 +1,22 @@
 :root {
   --bg-rgb: 255, 255, 255;
   --text-rgb: 0, 0, 0;
+  --text--light-rgb: 143, 143, 143;
   --bg--invert-rgb: 0, 0, 0;
   --text--invert-rgb: 255, 255, 255;
+  --submit-rgb: 5, 107, 247;
+  --cancel-rgb: 250, 62, 62;
+  --border-radius: 0.5em;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
-    --bg-rgb: 0, 0, 0;
+    --bg-rgb: 24, 24, 24;
     --text-rgb: 255, 255, 255;
     --bg--invert-rgb: 255, 255, 255;
     --text--invert-rgb: 0, 0, 0;
   }
-}
+} */
 
 * {
   box-sizing: border-box;
@@ -41,8 +45,19 @@ button {
   padding: 1em;
 }
 
-@media (prefers-color-scheme: dark) {
+input,
+select {
+  padding: 0.5em;
+  font-family: inherit;
+}
+
+table {
+  border-collapse: collapse;
+  border: none;
+}
+
+/* @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
-}
+} */
