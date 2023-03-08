@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const initialState = {
+export const initialState = {
   status: 'idle',
   entities: {},
 };
@@ -20,6 +20,8 @@ export const fetchSeriesData = createAsyncThunk(
         },
       }
     );
+
+    console.log(data);
 
     function adjustDecimals(val) {
       return parseFloat(val.split(',').join('')).toFixed(obj.decimals);
