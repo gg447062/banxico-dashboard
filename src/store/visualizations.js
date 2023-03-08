@@ -21,8 +21,6 @@ export const fetchSeriesData = createAsyncThunk(
       }
     );
 
-    console.log(data);
-
     function adjustDecimals(val) {
       return parseFloat(val.split(',').join('')).toFixed(obj.decimals);
     }
