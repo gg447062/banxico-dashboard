@@ -142,7 +142,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
           <div>
             {selectedSeries.map((el, i) => {
               return (
-                <div aria-label="selected-series-item" key={i}>
+                <div data-testid="selected-series-item" key={i}>
                   {el}
                 </div>
               );
