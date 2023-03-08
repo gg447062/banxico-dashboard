@@ -141,7 +141,11 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
           <div>selected series</div>
           <div>
             {selectedSeries.map((el, i) => {
-              return <div key={i}>{el}</div>;
+              return (
+                <div aria-label="selected-series-item" key={i}>
+                  {el}
+                </div>
+              );
             })}
           </div>
           <label htmlFor="query">search</label>
@@ -156,6 +160,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                 return (
                   <p
                     key={i}
+                    aria-label="series-catalog-item"
                     onClick={(e) => {
                       handleClick(e.target, el.variable);
                     }}
@@ -227,7 +232,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                       }}
                       defaultValue={colors[el]}
                     >
-                      <option>----</option>
+                      <option value="">----</option>
                       <option value={'blue'}>blue</option>
                       <option value={'red'}>red</option>
                       <option value={'green'}>green</option>
@@ -268,7 +273,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
             <option value="en">English</option>
           </select>
           <button onClick={hide}>cancel</button>
-          {mode === 'add' && <button onClick={add}>add</button>}
+          {mode === 'add' && <button onClick={add}>generate</button>}
           {mode === 'edit' && (
             <button onClick={updateVisualization}>update</button>
           )}
