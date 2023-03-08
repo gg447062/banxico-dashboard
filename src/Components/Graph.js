@@ -20,7 +20,7 @@ export default function Graph({ id }) {
   const height = 400;
 
   return (
-    <div>
+    <div data-testid="graph">
       <h2>{data.title}</h2>
       {data.graphType === 'bar' && (
         <BarChart width={width} height={height} data={data.data}>
