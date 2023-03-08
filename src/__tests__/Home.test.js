@@ -1,5 +1,5 @@
 import { screen, fireEvent } from '@testing-library/react';
-import { renderWithProviders } from '../lib/utils/text_utils';
+import { renderWithProviders } from '../lib/utils/test_utils';
 import { rest } from 'msw';
 import { setupServer } from 'msw/node';
 import '@testing-library/jest-dom';
@@ -125,9 +125,7 @@ describe('Add Visualization Modal', () => {
     fireEvent.click(seriesItems[0]);
     fireEvent.click(seriesItems[1]);
 
-    const selectedSeriesItems = screen.getAllByLabelText(
-      'selected-series-item'
-    );
+    const selectedSeriesItems = screen.getAllByTestId('selected-series-item');
 
     const colorSelect = screen.getByLabelText(selectedSeriesItems[0].innerHTML);
     const colorSelectTwo = screen.getByLabelText(
@@ -146,7 +144,7 @@ describe('Add Visualization Modal', () => {
     });
     const seriesItems = await screen.findAllByLabelText('series-catalog-item');
     fireEvent.click(seriesItems[0]);
-    const selectedSeriesItem = screen.getByLabelText('selected-series-item');
+    const selectedSeriesItem = screen.getByTestId('selected-series-item');
     expect(screen.getByLabelText(selectedSeriesItem.innerHTML).value).toBe('');
     fireEvent.change(screen.getByLabelText(selectedSeriesItem.innerHTML), {
       target: { value: 'pink' },
@@ -159,20 +157,16 @@ describe('Add Visualization Modal', () => {
   it('adds the selected series item to state when clicked', async () => {
     const seriesItems = await screen.findAllByLabelText('series-catalog-item');
     fireEvent.click(seriesItems[0]);
-    const selectedSeriesItems = screen.getAllByLabelText(
-      'selected-series-item'
-    );
+    const selectedSeriesItems = screen.getAllByTestId('selected-series-item');
     expect(selectedSeriesItems.length).toEqual(1);
   });
 
   it('removes the selected series item from state when clicked twice', async () => {
     const seriesItems = await screen.findAllByLabelText('series-catalog-item');
     fireEvent.click(seriesItems[0]);
-    expect(screen.getAllByLabelText('selected-series-item').length).toEqual(1);
+    expect(screen.getAllByTestId('selected-series-item').length).toEqual(1);
     fireEvent.click(seriesItems[0]);
-    expect(screen.queryAllByLabelText('selected-series-item').length).toEqual(
-      0
-    );
+    expect(screen.queryAllByTestId('selected-series-item').length).toEqual(0);
   });
 
   it('is hidden when cancel button is clicked', () => {
