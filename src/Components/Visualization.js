@@ -16,8 +16,9 @@ export default function Visualization({
     openEditModal();
   }
   return (
-    <div>
+    <div data-testid="visualization">
       <button
+        aria-label="remove-visualization"
         onClick={() => {
           dispatch(remove(id));
         }}
