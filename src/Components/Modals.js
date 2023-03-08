@@ -10,6 +10,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   const today = new Date().toISOString().split('T')[0];
   const [series, setSeries] = useState(null);
   const [page, setPage] = useState(1);
+  const [pageLimit, setPageLimit] = useState(null);
   const [query, setQuery] = useState('');
   const [selectedSeries, setSelectedSeries] = useState([]);
   const [type, setType] = useState('table');
@@ -42,31 +43,15 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
     setLanguage('es');
   }
 
-  function updateVisualization() {
-    const seriesString = selectedSeries.join(',');
-
-    dispatch(
-      fetchSeriesData({
-        seriesString,
-        type,
-        language,
-        title,
-        startDate,
-        endDate,
-        decimals,
-        dateFormat,
-        graphType,
-        colors,
-        id,
-      })
-    );
+  function cancel() {
     reset();
     hide();
   }
 
-  async function add() {
+  async function addOrUpdate() {
     const seriesString = selectedSeries.join(',');
-    const id = uuid().slice(0, 8);
+    const newId = uuid().slice(0, 8);
+
     dispatch(
       fetchSeriesData({
         seriesString,
@@ -75,11 +60,11 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
         title,
         startDate,
         endDate,
-        decimals,
-        dateFormat,
-        graphType,
-        colors,
-        id,
+        decimals: type === 'table' ? decimals : '',
+        dateFormat: type === 'table' ? dateFormat : '',
+        graphType: type === 'graph' ? graphType : '',
+        colors: type === 'graph' ? colors : '',
+        id: id ? id : newId,
       })
     );
     reset();
@@ -87,16 +72,35 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   }
 
   function handleClick(el, val) {
-    if (el.classList.contains(styles.selected)) {
+    if (selectedSeries.includes(val)) {
       el.classList.remove(styles.selected);
-      const i = selectedSeries.indexOf(val);
-      const _selectedSeries = selectedSeries
-        .slice(0, i)
-        .concat(selectedSeries.slice(i + 1));
+
+      const _selectedSeries = selectedSeries.filter((el) => el !== val);
+      const { [val]: tmp, ...rest } = colors;
+      setColors(rest);
       setSelectedSeries(_selectedSeries);
     } else {
       el.classList.add(styles.selected);
+
       setSelectedSeries([...selectedSeries, val]);
+    }
+  }
+
+  async function handleNextPage(increment) {
+    const nextPage = page + increment;
+    if (nextPage < 1) {
+      return;
+    } else {
+      const { data } = await axios.get(
+        `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/?page=${nextPage}`,
+        {
+          headers: {
+            Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
+          },
+        }
+      );
+      setSeries(data.data);
+      setPage(nextPage);
     }
   }
 
@@ -110,7 +114,9 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
           },
         }
       );
+
       setSeries(data.data);
+      setPageLimit(data.totalPages);
     }
 
     function setStateFromVisualization() {
@@ -136,147 +142,168 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
 
   return isOpen
     ? createPortal(
-        <div className={styles.base}>
-          <h2>Add a visualization</h2>
-          <div>selected series</div>
-          <div>
-            {selectedSeries.map((el, i) => {
-              return (
-                <div data-testid="selected-series-item" key={i}>
-                  {el}
-                </div>
-              );
-            })}
-          </div>
-          <label htmlFor="query">search</label>
-          <input
-            id="query"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-          ></input>
-          <div>
-            {series &&
-              series.map((el, i) => {
-                return (
-                  <p
-                    key={i}
-                    aria-label="series-catalog-item"
-                    onClick={(e) => {
-                      handleClick(e.target, el.variable);
-                    }}
-                    className={
-                      selectedSeries.includes(el.variable)
-                        ? styles.selected
-                        : ''
-                    }
-                  >
-                    {el.display_name}
-                  </p>
-                );
-              })}
-          </div>
-          <label htmlFor="type">Visualization Type</label>
-          <select
-            id="type"
-            onChange={(e) => setType(e.target.value)}
-            value={type}
-          >
-            <option value={''}>-----</option>
-            <option value={'table'}>table</option>
-            <option value={'graph'}>graph</option>
-          </select>
-          {type === 'table' && (
-            <>
-              <label htmlFor="decimals">Decimals</label>
-              <input
-                id="decimals"
-                type="number"
-                value={decimals}
-                onChange={(e) => setDecimals(e.target.value)}
-              ></input>
-              <label htmlFor="dateFormat">Date Format</label>
-              <select
-                id="dateFormat"
-                onChange={(e) => setDateFormat(e.target.value)}
-                defaultValue={dateFormat}
-              >
-                <option value={''}>-----</option>
-                <option value={'dd/mm/yyyy'}>dd/mm/yyyy</option>
-                <option value={'mm/dd/yyyy'}>mm/dd/yyyy</option>
-                <option value={'yyyy/dd/mm'}>yyyy/dd/mm</option>
-              </select>
-            </>
-          )}
-          {type === 'graph' && (
-            <>
-              <label htmlFor="graphType">Graph Type</label>
-              <select
-                id="graphType"
-                onChange={(e) => setGraphType(e.target.value)}
-                defaultValue={graphType}
-              >
-                <option value={''}>-----</option>
-                <option value={'bar'}>bar</option>
-                <option value={'area'}>area</option>
-                <option value={'line'}>line</option>
-              </select>
-              <p>Select colors for each series</p>
+        <div className={styles.bg}>
+          <div className={styles.body}>
+            <h2>Add a visualization</h2>
+            <div>selected series</div>
+            <div>
               {selectedSeries.map((el, i) => {
                 return (
-                  <div key={i}>
-                    <label htmlFor="color-select">{el}</label>
-                    <select
-                      id="color-select"
-                      onChange={(e) => {
-                        setColors({ ...colors, [el]: e.target.value });
-                      }}
-                      defaultValue={colors[el]}
-                    >
-                      <option value="">----</option>
-                      <option value={'blue'}>blue</option>
-                      <option value={'red'}>red</option>
-                      <option value={'green'}>green</option>
-                      <option value={'pink'}>pink</option>
-                    </select>
+                  <div data-testid="selected-series-item" key={i}>
+                    {el}
                   </div>
                 );
               })}
-            </>
-          )}
-          <label htmlFor="startDate">start date</label>
-          <input
-            type="date"
-            id="startDate"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-          ></input>
-          <label htmlFor="endDate">end date</label>
-          <input
-            type="date"
-            id="endDate"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-          ></input>
-          <label htmlFor="title">Title</label>
-          <input
-            id="title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-          ></input>
-          <label htmlFor="language">Language</label>
-          <select
-            id="language"
-            onChange={(e) => setLanguage(e.target.value)}
-            defaultValue={language}
-          >
-            <option value="es">Español</option>
-            <option value="en">English</option>
-          </select>
-          <button onClick={hide}>cancel</button>
-          {mode === 'add' && <button onClick={add}>generate</button>}
-          {mode === 'edit' && (
-            <button onClick={updateVisualization}>update</button>
-          )}
+            </div>
+            <label htmlFor="query">search</label>
+            <input
+              id="query"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            ></input>
+            <div>
+              {series &&
+                series.map((el, i) => {
+                  return (
+                    <p
+                      key={i}
+                      aria-label="series-catalog-item"
+                      onClick={(e) => {
+                        handleClick(e.target, el.variable);
+                      }}
+                      className={
+                        selectedSeries.includes(el.variable)
+                          ? styles.selected
+                          : ''
+                      }
+                    >
+                      {el.display_name}
+                    </p>
+                  );
+                })}
+            </div>
+            <button
+              onClick={() => {
+                handleNextPage(1);
+              }}
+              disabled={page === pageLimit}
+            >
+              next page
+            </button>
+            <button
+              onClick={() => {
+                handleNextPage(-1);
+              }}
+              disabled={page === 1}
+            >
+              previous page
+            </button>
+            <label htmlFor="startDate">start date</label>
+            <input
+              type="date"
+              id="startDate"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            ></input>
+            <label htmlFor="endDate">end date</label>
+            <input
+              type="date"
+              id="endDate"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            ></input>
+            <label htmlFor="type">Visualization Type</label>
+            <select
+              id="type"
+              onChange={(e) => setType(e.target.value)}
+              value={type}
+            >
+              <option value={''}>-----</option>
+              <option value={'table'}>table</option>
+              <option value={'graph'}>graph</option>
+            </select>
+            {type === 'table' && (
+              <>
+                <label htmlFor="decimals">Decimals</label>
+                <input
+                  id="decimals"
+                  type="number"
+                  value={decimals}
+                  onChange={(e) => setDecimals(e.target.value)}
+                ></input>
+                <label htmlFor="dateFormat">Date Format</label>
+                <select
+                  id="dateFormat"
+                  onChange={(e) => setDateFormat(e.target.value)}
+                  defaultValue={dateFormat}
+                >
+                  <option value={''}>-----</option>
+                  <option value={'dd/mm/yyyy'}>dd/mm/yyyy</option>
+                  <option value={'mm/dd/yyyy'}>mm/dd/yyyy</option>
+                  <option value={'yyyy/dd/mm'}>yyyy/dd/mm</option>
+                </select>
+              </>
+            )}
+            {type === 'graph' && (
+              <>
+                <label htmlFor="graphType">Graph Type</label>
+                <select
+                  id="graphType"
+                  onChange={(e) => setGraphType(e.target.value)}
+                  defaultValue={graphType}
+                >
+                  <option value={''}>-----</option>
+                  <option value={'bar'}>bar</option>
+                  <option value={'area'}>area</option>
+                  <option value={'line'}>line</option>
+                </select>
+                <p>Select colors for each series</p>
+                {selectedSeries.map((el, i) => {
+                  return (
+                    <div key={i}>
+                      <label htmlFor="color-select">{el}</label>
+                      <select
+                        id="color-select"
+                        onChange={(e) => {
+                          setColors({ ...colors, [el]: e.target.value });
+                        }}
+                        defaultValue={colors[el]}
+                      >
+                        <option value="">----</option>
+                        <option value={'blue'}>blue</option>
+                        <option value={'red'}>red</option>
+                        <option value={'green'}>green</option>
+                        <option value={'pink'}>pink</option>
+                      </select>
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            <label htmlFor="title">Title</label>
+            <input
+              id="title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            ></input>
+            <label htmlFor="language">Language</label>
+            <select
+              id="language"
+              onChange={(e) => setLanguage(e.target.value)}
+              defaultValue={language}
+            >
+              <option value="es">Español</option>
+              <option value="en">English</option>
+            </select>
+            <button onClick={cancel}>cancel</button>
+            {mode === 'add' && (
+              <button onClick={() => addOrUpdate()}>generate</button>
+            )}
+            {mode === 'edit' && (
+              <button onClick={() => addOrUpdate()}>update</button>
+            )}
+          </div>
         </div>,
         document.body
       )

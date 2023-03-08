@@ -1,4 +1,13 @@
-.base {
+.bg {
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(var(--bg-rgb), 0.7);
+}
+
+.body {
   position: absolute;
   top: 50%;
   left: 50%;
