@@ -1,25 +1,58 @@
 .base {
-  padding: 0.6em 1em;
-  border-radius: var(--border-radius);
+  padding: 0.7em 1.75em;
+  border-radius: 5em;
+  font-weight: var(--font-bold);
+}
+
+.base:hover {
+  cursor: pointer;
 }
 
 .primary {
   composes: base;
-  background-color: rgb(var(--bg-rgb));
-  border: 1px solid rgb(var(--bg--invert-rgb));
+  background-color: rgba(var(--grey-rgb), 0.2);
+  border: none;
   color: rgb(var(--text-rgb));
+}
+
+.primary span {
+  font-size: 1.25em;
+  padding-left: 0.25em;
+}
+
+.primary:hover {
+  background-color: rgba(var(--grey-rgb), 0.3);
+}
+
+.edit {
+  composes: base;
+  background-color: rgba(var(--grey-rgb), 0.1);
+  border: none;
+  color: rgba(var(--blue-rgb));
+}
+
+.edit:hover {
+  background-color: rgba(var(--grey-rgb), 0.2);
 }
 
 .cancel {
   composes: base;
-  background-color: rgb(var(--cancel-rgb));
-  border: 1px solid rgb(var(--cancel-rgb));
-  color: rgb(var(--text--invert-rgb));
+  background-color: rgb(var(--bg-rgb));
+  border: none;
+  color: rgb(var(--text-rgb));
+}
+
+.cancel:hover {
+  background-color: rgba(var(--grey-rgb), 0.05);
 }
 
 .submit {
   composes: base;
-  background-color: rgb(var(--submit-rgb));
-  border: 1px solid rgb(var(--submit-rgb));
+  background-color: rgb(var(--blue-rgb), 0.9);
+  border: none;
   color: rgb(var(--text--invert-rgb));
+}
+
+.submit:hover {
+  background-color: rgb(var(--blue-rgb));
 }

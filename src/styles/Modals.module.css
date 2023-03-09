@@ -4,28 +4,94 @@
   position: absolute;
   top: 0;
   left: 0;
-  background-color: rgba(var(--bg-rgb), 0.3);
+  background-color: rgba(var(--grey-rgb), 0.4);
+  z-index: 100;
 }
 
 .body {
   position: absolute;
+  width: 85vw;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: rgb(var(--bg-rgb));
-  border: 1px solid rgb(var(--text--light-rgb));
+  border: var(--border-light);
   border-radius: var(--border-radius);
   padding: 1em;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1em;
+  box-shadow: 5px 5px 10px rgba(var(--grey-rgb), 0.3);
+  z-index: 1000;
+}
+
+.h2 {
+  align-self: start;
 }
 
 .row {
   display: flex;
-  gap: 0.5em;
+  gap: 2em;
+}
+
+.column {
+  composes: row;
+  gap: 1em;
+  flex-direction: column;
+}
+
+.searchBarRow {
+  composes: row;
   align-items: center;
+  gap: 1em;
+}
+
+.searchBarRow span {
+  width: 1.5em;
+  text-align: center;
+}
+
+.inputs {
+  composes: column;
+  justify-content: space-between;
+}
+
+.inputRow {
+  composes: row;
+  gap: 1em;
+}
+
+.seriesRow {
+  composes: inputRow;
+  height: 1.5em;
+  min-width: 0;
+  max-width: 18em;
+  overflow-x: scroll;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.decimals {
+  width: 4em;
+}
+
+.colors {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1em;
+}
+
+.buttons {
+  width: 100%;
+  composes: inputRow;
+  justify-content: flex-end;
+}
+
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5em;
 }
 
 .searchBar {
@@ -33,36 +99,63 @@
   align-items: center;
   justify-content: space-between;
   padding: 1em;
-  border-bottom: 1px solid rgb(var(--text--light-rgb));
+  border-bottom: var(--border-light);
 }
 
 .seriesList {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgb(var(--text--light-rgb));
+  border: var(--border-light);
   border-radius: var(--border-radius);
 }
 
 .tableWrap {
-  height: 20em;
+  height: var(--max-height-modal);
   overflow: scroll;
 }
 
+.thead {
+  border-bottom: var(--border-light);
+}
+
+.tbody:hover {
+  cursor: pointer;
+}
+
 .tr {
-  border-top: 1px solid rgb(var(--text--light-rgb));
-  padding: 0.75em;
+  border-top: var(--border-light);
 }
 
 .tr:first-child {
   border-top: none;
 }
 
+.tr:hover {
+  background-color: rgba(var(--grey-rgb), 0.05);
+}
+
 .td {
-  padding: 0.75em;
+  padding: 1em;
+  font-weight: var(--font-light);
+}
+
+.tdBold {
+  composes: td;
+  font-weight: var(--font-bold);
+}
+
+.td span {
+  margin-left: 0.25em;
+  font-weight: inherit;
+}
+
+.th {
+  composes: td;
+  font-weight: var(--font-bold);
 }
 
 .tdSelected {
   composes: td;
-  background-color: rgb(var(--bg--invert-rgb));
+  background-color: rgb(var(--blue-rgb));
   color: rgb(var(--text--invert-rgb));
 }

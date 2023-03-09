@@ -1,11 +1,17 @@
+.wrapper {
+  max-height: 400px;
+  overflow: scroll;
+  padding: 1em;
+}
+
 .table {
   border-collapse: collapse;
 }
 
 .td,
 .th {
-  border: 1px solid rgb(var(--text-rgb));
-  padding: 1em;
+  border: var(--border-light);
+  padding: 1em 1.5em;
 }
 
 .th {

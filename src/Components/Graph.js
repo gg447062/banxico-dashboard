@@ -12,21 +12,22 @@ import {
   Tooltip,
 } from 'recharts';
 import { useSelector } from 'react-redux';
+import styles from '@/styles/Graph.module.css';
 
 export default function Graph({ id }) {
   const data = useSelector((state) => state.visualizations.entities[id]);
 
-  const width = 500;
+  const width = 600;
   const height = 400;
+  const yAxisWidth = 100;
 
   return (
-    <div data-testid="graph">
-      <h2>{data.title}</h2>
+    <div data-testid="graph" className={styles.wrapper}>
       {data.graphType === 'bar' && (
         <BarChart width={width} height={height} data={data.data}>
           <CartesianGrid strokeDasharray={'1 1'} />
           <XAxis dataKey={'fecha'} />
-          <YAxis />
+          <YAxis width={yAxisWidth} />
           <Legend />
           <Tooltip />
           {data.selectedSeries.map((el, i) => {
@@ -38,7 +39,7 @@ export default function Graph({ id }) {
         <LineChart width={width} height={height} data={data.data}>
           <CartesianGrid strokeDasharray={'1 1'} />
           <XAxis dataKey={'fecha'} />
-          <YAxis />
+          <YAxis width={yAxisWidth} />
           <Legend />
           <Tooltip />
           {data.selectedSeries.map((el, i) => {
@@ -57,7 +58,7 @@ export default function Graph({ id }) {
         <AreaChart width={width} height={height} data={data.data}>
           <CartesianGrid strokeDasharray={'1 1'} />
           <XAxis dataKey={'fecha'} />
-          <YAxis />
+          <YAxis width={yAxisWidth} />
           <Legend />
           <Tooltip />
           {data.selectedSeries.map((el, i) => {

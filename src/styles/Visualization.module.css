@@ -1,0 +1,26 @@
+.wrapper {
+  border: 1px solid rgb(var(--grey-rgb), 0.3);
+  border-radius: var(--border-radius);
+  height: max-content;
+  box-shadow: 5px 5px 10px rgb(var(--grey-rgb), 0.1);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: var(--border-light);
+  padding: 1em;
+}
+
+.buttons {
+  display: flex;
+  gap: 0.5em;
+}
+
+.title {
+  font-weight: var(--font-bold);
+  font-size: 1.5em;
+  width: max-content;
+  text-transform: capitalize;
+}

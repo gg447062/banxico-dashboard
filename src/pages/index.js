@@ -24,13 +24,17 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
+      <header className={styles.header}>
+        <h2>Banxico dashboard</h2>
+        <Button onClick={openAddModal} text="add" type="primary" />
+      </header>
       <main className={styles.main}>
-        {/* <h2>welcome to the dashboard</h2> */}
-        <div>
+        <div className={styles.visualizations}>
           {Object.values(visualizations).map((el, i) => {
             return (
               <Visualization
                 id={el.id}
+                title={el.title}
                 type={el.type}
                 key={i}
                 setCurrentVisualization={setCurrentVisualization}
@@ -39,7 +43,7 @@ export default function Home() {
             );
           })}
         </div>
-        <Button onClick={openAddModal} text="add" type="primary" />
+
         <VisualizationModal
           hide={closeAddModal}
           isOpen={addModalOpen}
