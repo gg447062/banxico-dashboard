@@ -130,7 +130,7 @@ describe('Edit Visualization Modal', () => {
     const endDateInput = await screen.findByLabelText(/End Date/i);
     const titleInput = await screen.findByLabelText(/Title/i);
     const languageInput = await screen.findByLabelText(/Language/i);
-    const colorsInput = screen.getByText(/Select colors for each series/i);
+    const colorsInput = screen.getByText(/Series colors/i);
     const graphTypeInput = screen.getByLabelText(/Graph Type/i);
 
     expect(typeInput.value).toBe(visualizationData.type);
@@ -228,7 +228,7 @@ describe('Add Visualization Modal', () => {
 
     fireEvent.change(typeInput, { target: { value: 'graph' } });
 
-    const colorsInput = screen.getByText(/Select colors for each series/i);
+    const colorsInput = screen.getByText(/Series colors/i);
     const graphTypeInput = screen.getByLabelText(/Graph Type/i);
 
     expect(colorsInput).toBeInTheDocument();
