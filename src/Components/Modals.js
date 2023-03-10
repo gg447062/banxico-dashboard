@@ -383,10 +383,13 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                                     value={colors[el]}
                                   >
                                     <option value="">----</option>
-                                    <option value={'blue'}>blue</option>
-                                    <option value={'red'}>red</option>
-                                    <option value={'green'}>green</option>
-                                    <option value={'pink'}>pink</option>
+                                    <option value={'#0f5bff'}>blue</option>
+                                    <option value={'#ff3d3d'}>red</option>
+                                    <option value={'#04cc15'}>green</option>
+                                    <option value={'#ff80df'}>pink</option>
+                                    <option value={'#ffe600'}>yellow</option>
+                                    <option value={'#ff7f08'}>orange</option>
+                                    <option value={'#ff7f08'}>purple</option>
                                   </select>
                                 </div>
                               );
