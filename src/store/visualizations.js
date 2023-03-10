@@ -96,6 +96,9 @@ export const visualizationSlice = createSlice({
     remove: (state, action) => {
       delete state.entities[action.payload];
     },
+    set: (state, action) => {
+      state.entities = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(fetchSeriesData.pending, (state) => {
@@ -108,6 +111,6 @@ export const visualizationSlice = createSlice({
   },
 });
 
-export const { remove, update } = visualizationSlice.actions;
+export const { remove, set } = visualizationSlice.actions;
 
 export default visualizationSlice.reducer;
