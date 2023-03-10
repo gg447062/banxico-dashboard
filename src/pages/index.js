@@ -49,18 +49,26 @@ export default function Home() {
       </header>
       <main className={styles.main}>
         <div className={styles.visualizations}>
-          {Object.values(visualizations).map((el, i) => {
-            return (
-              <Visualization
-                id={el.id}
-                title={el.title}
-                type={el.type}
-                key={i}
-                setCurrentVisualization={setCurrentVisualization}
-                openEditModal={openEditModal}
-              />
-            );
-          })}
+          {Object.values(visualizations).length === 0 && (
+            <div className={styles.welcome}>
+              <h2>Welcome to the dashboard.</h2>
+              <p>{`So far you don't have any visualizations`}</p>
+              <p>Click the add button to begin.</p>
+            </div>
+          )}
+          {Object.values(visualizations).length > 0 &&
+            Object.values(visualizations).map((el, i) => {
+              return (
+                <Visualization
+                  id={el.id}
+                  title={el.title}
+                  type={el.type}
+                  key={i}
+                  setCurrentVisualization={setCurrentVisualization}
+                  openEditModal={openEditModal}
+                />
+              );
+            })}
         </div>
 
         <VisualizationModal

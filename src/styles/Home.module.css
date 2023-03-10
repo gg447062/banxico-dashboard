@@ -46,3 +46,13 @@
   display: flex;
   gap: 2em;
 }
+
+.welcome {
+  height: 50vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1em;
+}

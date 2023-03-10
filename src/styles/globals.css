@@ -26,16 +26,17 @@ body {
   width: 100vw;
   max-width: 100%;
   min-height: 100vh;
+  overflow-x: hidden;
   font-family: 'Montserrat', sans-serif;
 }
 
 .noScroll {
-  overflow: hidden;
+  overflow-y: hidden;
 }
 
 @media only screen and (max-width: 899px) {
   .noScroll {
-    overflow: unset;
+    overflow-y: unset;
   }
 }
 
