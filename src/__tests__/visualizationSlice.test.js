@@ -52,7 +52,7 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('redux store', () => {
+describe('visualization slice', () => {
   it('initializes store with initial state', () => {
     const visualizationSliceInit = visualizationSlice(initialState, {
       type: 'unknown',
