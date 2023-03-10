@@ -2,16 +2,59 @@ import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchSeriesData } from '@/store/visualizations';
-import axios from 'axios';
+import { fetchSeriesCatalog } from '@/store/catalog';
 import styles from '@/styles/Modals.module.css';
 import { v4 as uuid } from 'uuid';
 import Button from './Button';
 
+function SeriesListTable({ selectedSeries, page, handleClick }) {
+  const series = useSelector((state) => state.catalog.entities[page]);
+  const status = useSelector((state) => state.catalog.status);
+  const ready = status === 'idle' && series;
+  return (
+    <div className={styles.tableWrap}>
+      <table>
+        <thead className={styles.thead}>
+          <tr>
+            <th className={styles.th}>ID</th>
+            <th className={styles.th}>Name</th>
+            <th className={styles.th}>Add</th>
+          </tr>
+        </thead>
+        <tbody className={styles.tbody}>
+          {ready &&
+            series.map((el, i) => {
+              return (
+                <tr key={i} className={styles.tr}>
+                  <td className={styles.tdBold}>{el.variable}</td>
+                  <td className={styles.td}>{el.display_name}</td>
+                  <td
+                    aria-label="series-catalog-item"
+                    onClick={(e) => {
+                      handleClick(e.target, el.variable);
+                    }}
+                    className={
+                      selectedSeries.includes(el.variable)
+                        ? styles.tdSelected
+                        : styles.td
+                    }
+                  >
+                    <span className="material-symbols-outlined">
+                      {selectedSeries.includes(el.variable) ? 'remove' : 'add'}
+                    </span>
+                  </td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   const today = new Date().toISOString().split('T')[0];
-  const [series, setSeries] = useState(null);
   const [page, setPage] = useState(1);
-  const [pageLimit, setPageLimit] = useState(null);
   const [query, setQuery] = useState('');
   const [selectedSeries, setSelectedSeries] = useState([]);
   const [type, setType] = useState('table');
@@ -24,13 +67,14 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   const [title, setTitle] = useState('');
   const [language, setLanguage] = useState('es');
   const dispatch = useDispatch();
+  const pageLimit = useSelector((state) => state.catalog.totalPages);
+  const seriesList = useSelector((state) => state.catalog.entities);
   const visualizationData = useSelector(
     (state) => state.visualizations.entities[id]
   );
 
   function reset() {
-    // setSeries(null);
-    // setPage(1);
+    setPage(1);
     setQuery('');
     setSelectedSeries([]);
     setType('table');
@@ -91,35 +135,13 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
     const nextPage = page + increment;
     if (nextPage < 1 || nextPage > pageLimit) {
       return;
-    } else {
-      const { data } = await axios.get(
-        `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/?page=${nextPage}`,
-        {
-          headers: {
-            Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
-          },
-        }
-      );
-      setSeries(data.data);
-      setPage(nextPage);
+    } else if (!seriesList[nextPage]) {
+      dispatch(fetchSeriesCatalog({ page: nextPage, query }));
     }
+    setPage(nextPage);
   }
 
   useEffect(() => {
-    async function fetchSeriesCatalog() {
-      const { data } = await axios.get(
-        `https://5i8qcjp333.execute-api.us-east-1.amazonaws.com/dev/series/?page=1`,
-        {
-          headers: {
-            Authorization: process.env.NEXT_PUBLIC_TUKAN_TOKEN,
-          },
-        }
-      );
-
-      setSeries(data.data);
-      setPageLimit(data.totalPages);
-    }
-
     function setStateFromVisualization() {
       setSelectedSeries(visualizationData.selectedSeries);
       setType(visualizationData.type);
@@ -133,13 +155,13 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
       setDateFormat(visualizationData.dateFormat);
     }
 
-    if (isOpen && !series) {
-      fetchSeriesCatalog();
+    if (isOpen && !seriesList[page]) {
+      dispatch(fetchSeriesCatalog({ page: 1, query: '' }));
     }
     if (isOpen && mode === 'edit') {
       setStateFromVisualization();
     }
-  }, [isOpen, series, mode, visualizationData]);
+  }, [isOpen, seriesList, page, mode, visualizationData, dispatch]);
 
   useEffect(() => {
     document.body.style.overflow = isOpen ? 'hidden' : '';
@@ -170,7 +192,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                         }}
                         type="primary"
                         text={
-                          <span class="material-symbols-outlined">
+                          <span className="material-symbols-outlined">
                             arrow_back_ios
                           </span>
                         }
@@ -183,7 +205,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                         }}
                         type="primary"
                         text={
-                          <span class="material-symbols-outlined">
+                          <span className="material-symbols-outlined">
                             arrow_forward_ios
                           </span>
                         }
@@ -191,45 +213,11 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                       />
                     </div>
                   </div>
-                  <div className={styles.tableWrap}>
-                    <table>
-                      <thead className={styles.thead}>
-                        <tr>
-                          <th className={styles.th}>ID</th>
-                          <th className={styles.th}>Name</th>
-                          <th className={styles.th}>Add</th>
-                        </tr>
-                      </thead>
-                      <tbody className={styles.tbody}>
-                        {series &&
-                          series.map((el, i) => {
-                            return (
-                              <tr key={i} className={styles.tr}>
-                                <td className={styles.tdBold}>{el.variable}</td>
-                                <td className={styles.td}>{el.display_name}</td>
-                                <td
-                                  aria-label="series-catalog-item"
-                                  onClick={(e) => {
-                                    handleClick(e.target, el.variable);
-                                  }}
-                                  className={
-                                    selectedSeries.includes(el.variable)
-                                      ? styles.tdSelected
-                                      : styles.td
-                                  }
-                                >
-                                  <span className="material-symbols-outlined">
-                                    {selectedSeries.includes(el.variable)
-                                      ? 'remove'
-                                      : 'add'}
-                                  </span>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                      </tbody>
-                    </table>
-                  </div>
+                  <SeriesListTable
+                    selectedSeries={selectedSeries}
+                    page={page}
+                    handleClick={handleClick}
+                  />
                 </div>
               </div>
 
