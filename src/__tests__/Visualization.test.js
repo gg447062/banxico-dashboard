@@ -4,6 +4,12 @@ import '@testing-library/jest-dom';
 import Home from '../pages';
 import { initialStateWithVisualizations } from '../lib/utils/test_utils';
 
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
+
 describe('Visualization component', () => {
   let testStore;
   beforeEach(() => {

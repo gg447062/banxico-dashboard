@@ -3,7 +3,12 @@ import { renderWithProviders } from '../lib/utils/test_utils';
 import '@testing-library/jest-dom';
 import Home from '../pages';
 import { initialStateWithVisualizations } from '../lib/utils/test_utils';
-console.log(initialStateWithVisualizations);
+
+global.ResizeObserver = jest.fn().mockImplementation(() => ({
+  observe: jest.fn(),
+  unobserve: jest.fn(),
+  disconnect: jest.fn(),
+}));
 
 describe('Edit Visualization Modal', () => {
   let testStore;

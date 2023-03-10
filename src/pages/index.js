@@ -56,19 +56,18 @@ export default function Home() {
               <p>Click the add button to begin.</p>
             </div>
           )}
-          {Object.values(visualizations).length > 0 &&
-            Object.values(visualizations).map((el, i) => {
-              return (
-                <Visualization
-                  id={el.id}
-                  title={el.title}
-                  type={el.type}
-                  key={i}
-                  setCurrentVisualization={setCurrentVisualization}
-                  openEditModal={openEditModal}
-                />
-              );
-            })}
+          {Object.values(visualizations).map((el, i) => {
+            return (
+              <Visualization
+                id={el.id}
+                title={el.title}
+                type={el.type}
+                key={i}
+                setCurrentVisualization={setCurrentVisualization}
+                openEditModal={openEditModal}
+              />
+            );
+          })}
         </div>
 
         <VisualizationModal

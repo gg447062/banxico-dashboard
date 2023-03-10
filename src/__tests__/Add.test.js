@@ -130,10 +130,10 @@ describe('Add Visualization Modal', () => {
     const selectedSeriesItem = screen.getByTestId('selected-series-item');
     expect(screen.getByLabelText(selectedSeriesItem.innerHTML).value).toBe('');
     fireEvent.change(screen.getByLabelText(selectedSeriesItem.innerHTML), {
-      target: { value: 'pink' },
+      target: { value: '#ff80df' },
     });
     expect(screen.getByLabelText(selectedSeriesItem.innerHTML).value).toBe(
-      'pink'
+      '#ff80df'
     );
   });
 
