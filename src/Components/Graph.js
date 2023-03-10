@@ -20,7 +20,7 @@ export default function Graph({ id }) {
 
   const width = '100%';
   const height = '100%';
-  const yAxisWidth = 100;
+  const yAxisWidth = 90;
 
   return (
     <div data-testid="graph" className={styles.wrapper}>

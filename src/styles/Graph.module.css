@@ -1,11 +1,13 @@
 .wrapper {
   padding-right: 2em;
-  margin: 2em;
-  width: 90%;
+  margin: 2em 0;
+  width: 40vw;
+  height: 40vh;
 }
 
 @media only screen and (max-width: 899px) {
   .wrapper {
-    width: 80%;
+    width: 75vw;
+    height: 30vh;
   }
 }
