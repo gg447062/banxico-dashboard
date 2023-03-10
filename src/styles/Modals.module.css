@@ -26,6 +26,13 @@
   z-index: 1000;
 }
 
+.msgBody {
+  composes: body;
+  width: max-content;
+  gap: 2em;
+  padding: 2em;
+}
+
 .h2 {
   align-self: start;
 }

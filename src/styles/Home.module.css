@@ -26,3 +26,8 @@
   background-color: rgb(var(--bg-rgb));
   z-index: 10;
 }
+
+.buttons {
+  display: flex;
+  gap: 2em;
+}
