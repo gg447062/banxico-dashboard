@@ -6,6 +6,7 @@ import { fetchSeriesCatalog } from '@/store/catalog';
 import styles from '@/styles/Modals.module.css';
 import { v4 as uuid } from 'uuid';
 import Button from './Button';
+import Image from 'next/image';
 
 function SeriesListTable({ selectedSeries, page, handleClick }) {
   const series = useSelector((state) => state.catalog.entities[page]);
@@ -17,7 +18,7 @@ function SeriesListTable({ selectedSeries, page, handleClick }) {
         <thead className={styles.thead}>
           <tr>
             <th className={styles.th}>ID</th>
-            <th className={styles.th}>Name</th>
+            <th className={styles.thName}>Name</th>
             <th className={styles.th}>Add</th>
           </tr>
         </thead>
@@ -27,7 +28,7 @@ function SeriesListTable({ selectedSeries, page, handleClick }) {
               return (
                 <tr key={i} className={styles.tr}>
                   <td className={styles.tdBold}>{el.variable}</td>
-                  <td className={styles.td}>{el.display_name}</td>
+                  <td className={styles.tdName}>{el.display_name}</td>
                   <td
                     aria-label="series-catalog-item"
                     onClick={(e) => {
@@ -39,9 +40,17 @@ function SeriesListTable({ selectedSeries, page, handleClick }) {
                         : styles.td
                     }
                   >
-                    <span className="material-symbols-outlined">
-                      {selectedSeries.includes(el.variable) ? 'remove' : 'add'}
-                    </span>
+                    <Image
+                      className={styles.imgButton}
+                      src={
+                        selectedSeries.includes(el.variable)
+                          ? 'remove.svg'
+                          : 'add.svg'
+                      }
+                      width={50}
+                      height={50}
+                      alt={'plus'}
+                    />
                   </td>
                 </tr>
               );
@@ -131,7 +140,11 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
     }
   }
 
-  async function handleNextPage(increment) {
+  function handleSearch() {
+    dispatch(fetchSeriesCatalog({ page, query }));
+  }
+
+  function handleNextPage(increment) {
     const nextPage = page + increment;
     if (nextPage < 1 || nextPage > pageLimit) {
       return;
@@ -164,7 +177,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
   }, [isOpen, seriesList, page, mode, visualizationData, dispatch]);
 
   useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : '';
+    document.body.classList = isOpen ? 'hidden' : '';
   }, [isOpen]);
 
   return isOpen
@@ -174,27 +187,41 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
             <div className={styles.row}>
               <h2 className={styles.h2}>Add a visualization</h2>
             </div>
-            <div className={styles.row}>
+            <div className={styles.mainContent}>
               <div className={styles.column}>
                 <div className={styles.seriesList}>
                   <div className={styles.searchBar}>
-                    <input
-                      id="query"
-                      value={query}
-                      onChange={(e) => setQuery(e.target.value)}
-                      placeholder="Search"
-                    ></input>
+                    <div className={styles.searchInputWrapper}>
+                      <input
+                        id="query"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search"
+                      ></input>
+                      <Image
+                        className={styles.imgButton}
+                        onClick={handleSearch}
+                        src={'search.svg'}
+                        width={50}
+                        height={50}
+                        alt={'back'}
+                      />
+                    </div>
 
                     <div className={styles.searchBarRow}>
                       <Button
                         onClick={() => {
                           handleNextPage(-1);
                         }}
-                        type="primary"
+                        type="nav"
                         text={
-                          <span className="material-symbols-outlined">
-                            arrow_back_ios
-                          </span>
+                          <Image
+                            className={styles.imgButton}
+                            src={'back.svg'}
+                            width={50}
+                            height={50}
+                            alt={'back'}
+                          />
                         }
                         label="previous"
                       />
@@ -203,11 +230,15 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
                         onClick={() => {
                           handleNextPage(1);
                         }}
-                        type="primary"
+                        type="nav"
                         text={
-                          <span className="material-symbols-outlined">
-                            arrow_forward_ios
-                          </span>
+                          <Image
+                            className={styles.imgButton}
+                            src={'next.svg'}
+                            width={50}
+                            height={50}
+                            alt={'next'}
+                          />
                         }
                         label="next"
                       />
@@ -224,7 +255,7 @@ export function VisualizationModal({ isOpen, hide, mode = 'add', id = '' }) {
               <div className={styles.inputs}>
                 <div className={styles.column}>
                   <div className={styles.column}>
-                    <h3>Selected Series:</h3>
+                    <h3 className={styles.h3}>Selected Series:</h3>
                     <div className={styles.seriesRow}>
                       {selectedSeries.map((el, i) => {
                         return (

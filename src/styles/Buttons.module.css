@@ -46,6 +46,16 @@
   background-color: rgba(var(--grey-rgb), 0.05);
 }
 
+.nav {
+  composes: cancel;
+}
+
+@media only screen and (max-width: 899px) {
+  .nav {
+    padding: 0;
+  }
+}
+
 .submit {
   composes: base;
   background-color: rgb(var(--blue-rgb), 0.9);

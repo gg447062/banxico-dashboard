@@ -23,9 +23,20 @@
 
 html,
 body {
-  max-width: 100vw;
+  width: 100vw;
+  max-width: 100%;
   min-height: 100vh;
   font-family: 'Montserrat', sans-serif;
+}
+
+.noScroll {
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 899px) {
+  .noScroll {
+    overflow: unset;
+  }
 }
 
 body {

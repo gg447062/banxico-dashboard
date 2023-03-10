@@ -1,5 +1,6 @@
 .bg {
   width: 100vw;
+  max-width: 100%;
   height: 100vh;
   position: absolute;
   top: 0;
@@ -26,6 +27,15 @@
   z-index: 1000;
 }
 
+@media only screen and (max-width: 899px) {
+  .body {
+    width: 100%;
+    top: 0;
+    left: 0;
+    transform: none;
+  }
+}
+
 .msgBody {
   composes: body;
   width: max-content;
@@ -48,10 +58,26 @@
   flex-direction: column;
 }
 
+.mainContent {
+  composes: row;
+}
+
+@media only screen and (max-width: 899px) {
+  .mainContent {
+    flex-direction: column;
+  }
+}
+
 .searchBarRow {
   composes: row;
   align-items: center;
   gap: 1em;
+}
+
+@media only screen and (max-width: 899px) {
+  .searchBarRow {
+    gap: 0;
+  }
 }
 
 .searchBarRow span {
@@ -67,6 +93,22 @@
 .inputRow {
   composes: row;
   gap: 1em;
+}
+
+@media only screen and (max-width: 899px) {
+  .inputRow,
+  .column {
+    max-width: 90vw;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+@media only screen and (max-width: 899px) {
+  .h3 {
+    max-width: fit-content;
+    justify-content: center;
+  }
 }
 
 .seriesRow {
@@ -95,6 +137,15 @@
   justify-content: flex-end;
 }
 
+@media only screen and (max-width: 899px) {
+  .buttons {
+    padding-top: 2em;
+    max-width: 90vw;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
 .inputWrapper {
   display: flex;
   flex-direction: column;
@@ -107,6 +158,11 @@
   justify-content: space-between;
   padding: 1em;
   border-bottom: var(--border-light);
+}
+
+.searchInputWrapper {
+  display: flex;
+  gap: 0.25em;
 }
 
 .seriesList {
@@ -146,19 +202,50 @@
   font-weight: var(--font-light);
 }
 
+.tdName {
+  composes: td;
+}
+
+@media only screen and (max-width: 899px) {
+  .tdName {
+    display: none;
+  }
+
+  .td {
+    width: 100%;
+    text-align: center;
+  }
+}
+
 .tdBold {
   composes: td;
   font-weight: var(--font-bold);
 }
 
-.td span {
-  margin-left: 0.25em;
+.imgButton {
+  height: 2em;
+  width: 2em;
+  color: inherit;
   font-weight: inherit;
+}
+
+.imgButton:hover {
+  cursor: pointer;
 }
 
 .th {
   composes: td;
   font-weight: var(--font-bold);
+}
+
+.thName {
+  composes: th;
+}
+
+@media only screen and (max-width: 899px) {
+  .thName {
+    display: none;
+  }
 }
 
 .tdSelected {

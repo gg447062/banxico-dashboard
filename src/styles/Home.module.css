@@ -1,11 +1,16 @@
 .main {
   position: relative;
   min-height: 100vh;
+  max-width: 100%;
   margin-top: 5em;
   padding: 1em;
   display: flex;
-  /* justify-content: center;
-  gap: 2em; */
+}
+
+@media only screen and (max-width: 899px) {
+  .main {
+    margin-top: 8em;
+  }
 }
 
 .visualizations {
@@ -25,6 +30,16 @@
   border-bottom: var(--border-light);
   background-color: rgb(var(--bg-rgb));
   z-index: 10;
+}
+
+@media only screen and (max-width: 899px) {
+  .header {
+    width: 100vw;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1em;
+  }
 }
 
 .buttons {
