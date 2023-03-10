@@ -3,13 +3,17 @@ import { render } from '@testing-library/react';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import visualizationSlice from '@/store/visualizations';
+import catalogSlice from '@/store/catalog';
 
 export function renderWithProviders(
   ui,
   {
     preloadedState = {},
     store = configureStore({
-      reducer: { visualizations: visualizationSlice },
+      reducer: {
+        visualizations: visualizationSlice,
+        catalog: catalogSlice,
+      },
       preloadedState,
     }),
     ...renderOptions
@@ -174,4 +178,18 @@ export const initialStateWithVisualizations = {
       },
     },
   },
+  catalog: {
+    status: 'idle',
+    totalPages: 1,
+    entities: {},
+  },
+};
+
+export const expectedCatalogEntry = {
+  1: [
+    { variable: '1', display_name: 'one' },
+    { variable: '2', display_name: 'two' },
+    { variable: '3', display_name: 'three' },
+    { variable: '4', display_name: 'four' },
+  ],
 };
