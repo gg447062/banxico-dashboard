@@ -2,16 +2,33 @@ import Head from 'next/head';
 import styles from '@/styles/Home.module.css';
 import { VisualizationModal } from '@/Components/Modals';
 import { useModals } from '@/hooks/useModals';
-import { useSelector } from 'react-redux';
-import { useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect } from 'react';
+import {
+  checkSessionStorage,
+  setSessionStorage,
+} from '../lib/utils/storage_utils';
 import Visualization from '@/Components/Visualization';
 import Button from '@/Components/Button';
+import { set } from '@/store/visualizations';
 
 export default function Home() {
   const [openAddModal, closeAddModal, addModalOpen] = useModals('addModal');
   const [openEditModal, closeEditModal, editModalOpen] = useModals('editModal');
   const [currentVisualization, setCurrentVisualization] = useState('');
+  const dispatch = useDispatch();
   const visualizations = useSelector((state) => state.visualizations.entities);
+
+  useEffect(() => {
+    const sessionStorageData = checkSessionStorage();
+    if (sessionStorageData && Object.keys(sessionStorageData).length > 0) {
+      dispatch(set(sessionStorageData));
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    setSessionStorage(visualizations);
+  }, [visualizations]);
 
   return (
     <>
@@ -26,7 +43,9 @@ export default function Home() {
       </Head>
       <header className={styles.header}>
         <h2>Banxico dashboard</h2>
-        <Button onClick={openAddModal} text="add" type="primary" />
+        <div className={styles.buttons}>
+          <Button onClick={openAddModal} text="add" type="primary" />
+        </div>
       </header>
       <main className={styles.main}>
         <div className={styles.visualizations}>
